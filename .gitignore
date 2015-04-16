@@ -1,0 +1,8 @@
+.gradle/
+build/
+idea-clock.iml
+idea-clock.ipr
+idea-clock.iws
+lib/
+out/
+projectFilesBackup*/
