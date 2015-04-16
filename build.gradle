@@ -1,0 +1,121 @@
+
+plugins {
+    id "com.github.maiflai.scalatest" version "0.6-5-g9065d91"
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+
+repositories {
+    mavenCentral()
+}
+
+// Pick the Linux version, as it is a tar.gz, since we can simply extract that
+def IDEA_SDK_URL = 'http://download.jetbrains.com/idea/ideaIC-14.0.4.tar.gz'
+def IDEA_SDK_NAME = 'IntelliJ IDEA Community Edition IC-139.1603.1'
+
+configurations {
+    ideaSdk
+    bundle // dependencies bundled with the plugin
+}
+
+dependencies {
+    ideaSdk fileTree(dir: 'lib/sdk/', include: ['*/lib/*.jar'])
+
+    compile configurations.ideaSdk
+    compile configurations.bundle
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+
+    // Scalatest requires:
+    testRuntime 'org.pegdown:pegdown:1.1.0'
+}
+
+task downloadIdeaSdk(type: Download) {
+    sourceUrl = IDEA_SDK_URL
+    target = file('lib/idea-sdk.tar.gz')
+}
+
+task extractIdeaSdk(type: Copy, dependsOn: [downloadIdeaSdk]) {
+    def zipFile = file('lib/idea-sdk.tar.gz')
+    def outputDir = file("lib/sdk")
+
+    from tarTree(resources.gzip(zipFile))
+    into outputDir
+}
+
+compileJava.dependsOn extractIdeaSdk
+
+test {
+    // Avoid parallel execution, since the IntelliJ boilerplate is not up to that
+    maxParallelForks = 1
+}
+
+task dist(type: Zip, dependsOn: [jar, test]) {
+    from configurations.bundle
+    from jar.archivePath
+    rename { f -> "lib/${f}" }
+    into 'idea-fitnesse'
+    baseName 'idea-fitnesse'
+}
+
+idea {
+    project {
+        languageLevel = '1.6'
+        jdkName = IDEA_SDK_NAME
+
+        ipr {
+            withXml {
+                it.node.find { node ->
+                    node.@name == 'ProjectRootManager'
+                }.'@project-jdk-type' = 'IDEA JDK'
+
+                logger.warn "=" * 71
+                logger.warn " Configured IDEA JDK '${jdkName}'."
+                logger.warn " Make sure you have it configured IntelliJ before opening the project!"
+                logger.warn "=" * 71
+            }
+        }
+    }
+
+    module {
+        scopes.COMPILE.minus = [ configurations.ideaSdk ]
+
+        iml {
+            beforeMerged { module ->
+                module.dependencies.clear()
+            }
+            withXml {
+                it.node.@type = 'PLUGIN_MODULE'
+                //  <component name="DevKit.ModuleBuildProperties" url="file://$MODULE_DIR$/src/main/resources/META-INF/plugin.xml" />
+                def cmp = it.node.appendNode('component')
+                cmp.@name = 'DevKit.ModuleBuildProperties'
+                cmp.@url = 'file://$MODULE_DIR$/src/main/resources/META-INF/plugin.xml'
+            }
+        }
+    }
+}
+
+
+// create Gradle wrapper 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
+
+// ========= Custom tasks ========= //
+
+class Download extends DefaultTask {
+    @Input
+    String sourceUrl
+
+    @OutputFile
+    File target
+
+    @TaskAction
+    void download() {
+       if (!target.parentFile.exists()) {
+           target.parentFile.mkdirs()
+       }
+       ant.get(src: sourceUrl, dest: target, skipexisting: 'true')
+    }
+}
