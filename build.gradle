@@ -1,8 +1,4 @@
 
-plugins {
-    id "com.github.maiflai.scalatest" version "0.6-5-g9065d91"
-}
-
 apply plugin: 'java'
 apply plugin: 'idea'
 
@@ -26,9 +22,6 @@ dependencies {
     compile configurations.bundle
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'
-
-    // Scalatest requires:
-    testRuntime 'org.pegdown:pegdown:1.1.0'
 }
 
 task downloadIdeaSdk(type: Download) {
@@ -44,8 +37,6 @@ task extractIdeaSdk(type: Copy, dependsOn: [downloadIdeaSdk]) {
     into outputDir
 }
 
-compileJava.dependsOn extractIdeaSdk
-
 test {
     // Avoid parallel execution, since the IntelliJ boilerplate is not up to that
     maxParallelForks = 1
@@ -58,6 +49,11 @@ task dist(type: Zip, dependsOn: [jar, test]) {
     into 'idea-fitnesse'
     baseName 'idea-fitnesse'
 }
+
+compileJava.dependsOn extractIdeaSdk
+build.dependsOn dist
+
+// ========= Workspace setup tasks ========= //
 
 idea {
     project {
