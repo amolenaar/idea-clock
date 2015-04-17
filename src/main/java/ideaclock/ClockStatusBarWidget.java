@@ -14,10 +14,11 @@ import java.awt.event.MouseEvent;
 
 public class ClockStatusBarWidget implements StatusBarWidget, StatusBarWidget.TextPresentation, ActionListener {
 
+    private static final long MINUTES = 60000;
     private final Timer timer = new Timer(1000, this);
     private StatusBar statusBar;
 
-    private volatile String theTime = getTime();
+    private volatile long lastTime = getTime();
 
     @NotNull
     @Override
@@ -47,9 +48,9 @@ public class ClockStatusBarWidget implements StatusBarWidget, StatusBarWidget.Te
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        String newTime = getTime();
-        if (!newTime.equals(theTime)) {
-            theTime = newTime;
+        long newTime = getTime();
+        if (newTime / MINUTES != lastTime / MINUTES) {
+            lastTime = newTime;
             statusBar.updateWidget(ID());
         }
         timer.restart();
@@ -58,12 +59,7 @@ public class ClockStatusBarWidget implements StatusBarWidget, StatusBarWidget.Te
     @NotNull
     @Override
     public String getText() {
-        return theTime;
-    }
-
-    @NotNull
-    private String getTime() {
-        return DateFormatUtil.formatTime(System.currentTimeMillis());
+        return "It's: " + DateFormatUtil.formatTime(lastTime);
     }
 
     @NotNull
@@ -74,7 +70,7 @@ public class ClockStatusBarWidget implements StatusBarWidget, StatusBarWidget.Te
 
     @Override
     public float getAlignment() {
-        return 0;
+        return 0.5f;
     }
 
     @Nullable
@@ -87,5 +83,10 @@ public class ClockStatusBarWidget implements StatusBarWidget, StatusBarWidget.Te
     @Override
     public Consumer<MouseEvent> getClickConsumer() {
         return null;
+    }
+
+    @NotNull
+    long getTime() {
+        return System.currentTimeMillis();
     }
 }
