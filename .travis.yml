@@ -4,4 +4,4 @@ jdk:
 
 install: ./gradlew extractIdeaSdk
 
-script: ./gradlew dist --stacktrace --info
+script: ./gradlew dist
