@@ -22,6 +22,9 @@ dependencies {
     testCompile 'org.mockito:mockito-core:1.10.19'
 }
 
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
 task downloadIdeaSdk(type: Download) {
     sourceUrl = IDEA_SDK_URL
     target = file('lib/idea-sdk.tar.gz')
