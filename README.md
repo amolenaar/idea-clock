@@ -1,4 +1,4 @@
-Introduction
+Introduction [![Build Status](https://travis-ci.org/amolenaar/idea-clock.svg?branch=master)](https://travis-ci.org/amolenaar/idea-clock)
 ===========
 
 Ever wonder what time it is? Now [IntelliJ] can tell you.
