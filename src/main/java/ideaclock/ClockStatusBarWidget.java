@@ -59,7 +59,7 @@ public class ClockStatusBarWidget implements StatusBarWidget, StatusBarWidget.Te
     @NotNull
     @Override
     public String getText() {
-        return "It's: " + DateFormatUtil.formatTime(lastTime);
+        return "\u25F7 " + DateFormatUtil.formatTime(lastTime);
     }
 
     @NotNull
