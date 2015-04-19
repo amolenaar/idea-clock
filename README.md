@@ -3,6 +3,8 @@ Introduction
 
 Ever wonder what time it is? Now [IntelliJ] can tell you.
 
+![Clock in action](clock-in-action.png)
+
 Building the plugin
 ===================
 
