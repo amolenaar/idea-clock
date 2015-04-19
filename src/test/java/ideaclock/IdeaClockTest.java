@@ -31,6 +31,6 @@ public class IdeaClockTest extends PlatformLiteFixture {
         StatusBarWidget.TextPresentation presentation = (StatusBarWidget.TextPresentation) ideaClock.getPresentation(StatusBarWidget.PlatformType.DEFAULT);
 
         String time = presentation.getText();
-        assertTrue("Clock value '" + time + "' does not match '. \\d\\d:\\d\\d'", time.matches("\u25F7 \\d\\d:\\d\\d"));
+        assertTrue("Clock value '" + time + "' does not match '\u25F7 \\d+:\\d+'", time.matches("^\u25F7 \\d+:\\d+( [AP]M)?"));
     }
 }
