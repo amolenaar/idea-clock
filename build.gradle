@@ -1,12 +1,10 @@
 
 apply plugin: 'java'
-apply plugin: 'idea'
-
 repositories {
     mavenCentral()
 }
 
-// Pick the Linux version, as it is a tar.gz, since we can simply extract that
+// Pick the Linux version, as it is a tar.gz we can simply extract
 def IDEA_SDK_URL = 'http://download.jetbrains.com/idea/ideaIC-14.0.4.tar.gz'
 def IDEA_SDK_NAME = 'IntelliJ IDEA Community Edition IC-139.1603.1'
 
@@ -46,14 +44,16 @@ task dist(type: Zip, dependsOn: [jar, test]) {
     from configurations.bundle
     from jar.archivePath
     rename { f -> "lib/${f}" }
-    into 'idea-fitnesse'
-    baseName 'idea-fitnesse'
+    into project.name
+    baseName project.name
 }
 
 compileJava.dependsOn extractIdeaSdk
 build.dependsOn dist
 
 // ========= Workspace setup tasks ========= //
+
+apply plugin: 'idea'
 
 idea {
     project {
@@ -92,8 +92,6 @@ idea {
     }
 }
 
-
-// create Gradle wrapper 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.3'
 }
