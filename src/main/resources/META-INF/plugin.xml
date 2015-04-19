@@ -15,6 +15,9 @@
   <!-- please see https://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
   <idea-version since-build="131"/>
 
+  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products -->
+  <depends>com.intellij.modules.platform</depends>
+
   <project-components>
     <component>
       <implementation-class>ideaclock.ClockPluginRegistration</implementation-class>
