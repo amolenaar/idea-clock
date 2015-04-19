@@ -110,9 +110,10 @@ class Download extends DefaultTask {
 
     @TaskAction
     void download() {
-       if (!target.parentFile.exists()) {
+        if (!target.parentFile.exists()) {
            target.parentFile.mkdirs()
-       }
-       ant.get(src: sourceUrl, dest: target, skipexisting: 'true')
+        }
+        logger.lifecycle "Downloading ${sourceUrl}, this might take a minute..."
+        ant.get(src: sourceUrl, dest: target, skipexisting: 'true')
     }
 }
