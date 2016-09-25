@@ -8,8 +8,16 @@
       A simple clock widget for IntelliJ.
     ]]></description>
 
-  <change-notes><![CDATA[
-    ]]>
+  <change-notes><![CDATA[<pre>
+1.1
+
+ * Converted code to Kotlin
+
+1.0
+
+ * Initial release
+
+</pre>]]>
   </change-notes>
 
   <!-- please see https://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
