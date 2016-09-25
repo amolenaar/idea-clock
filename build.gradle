@@ -1,13 +1,29 @@
 
-apply plugin: 'java'
+buildscript {
+    ext.kotlin_version = '1.0.4'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+plugins {
+  id 'java'
+}
+
+apply plugin: 'kotlin'
 
 repositories {
     mavenCentral()
 }
 
 // Pick the Linux version, as it is a tar.gz we can simply extract
-def IDEA_SDK_URL = 'http://download.jetbrains.com/idea/ideaIC-14.0.4.tar.gz'
-def IDEA_SDK_NAME = 'IntelliJ IDEA Community Edition IC-139.1603.1'
+def IDEA_SDK_URL = 'https://download-cf.jetbrains.com/idea/ideaIC-2016.2.4.tar.gz'
+def IDEA_SDK_NAME = 'IntelliJ IDEA Community Edition IC-162.2032.8'
 
 configurations {
     ideaSdk
@@ -17,14 +33,15 @@ configurations {
 dependencies {
     ideaSdk fileTree(dir: 'lib/sdk/', include: ['*/lib/*.jar'])
 
+    bundle "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile configurations.ideaSdk
     compile configurations.bundle
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'
 }
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 task downloadIdeaSdk(type: Download) {
     sourceUrl = IDEA_SDK_URL
@@ -53,6 +70,7 @@ task dist(type: Zip, dependsOn: [jar, test]) {
 }
 
 compileJava.dependsOn extractIdeaSdk
+compileKotlin.dependsOn extractIdeaSdk
 build.dependsOn dist
 
 // ========= Workspace setup tasks ========= //
@@ -61,7 +79,7 @@ apply plugin: 'idea'
 
 idea {
     project {
-        languageLevel = '1.6'
+        languageLevel = '1.8'
         jdkName = IDEA_SDK_NAME
 
         ipr {
